@@ -74,6 +74,9 @@ app.delete("/listings/:id", async(req,res)=>{
     res.redirect("/listings")
 })
 
+app.use((err, req, res, next) => {
+    res.send("Oh No, Something Went Wrong!")
+});
 
 
 
