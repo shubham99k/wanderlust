@@ -1,21 +1,19 @@
 <% layout("/layouts/boilerplate") %>
 
-<div class="container mt-1">
+<div class="container mt-3">
     <div class="row justify-content-center">
         <div class="col-lg-8 col-md-10">
 
             <h2 class="mb-4">Listing Details</h2>
 
-            <!-- Image Preview -->
-            <% if (listing.image) { %>
-                <div class="mb-4 text-center">
-                    <img
-                        src="<%= listing.image.url || listing.image %>"
-                        alt="Listing Image"
-                        class="img-fluid rounded"
-                        style="max-height: 350px; object-fit: cover;">
-                </div>
-            <% } %>
+            <!-- Image -->
+            <div class="mb-4 text-center">
+                <img
+                    src="<%= listing.image.url %>"
+                    alt="Listing Image"
+                    class="img-fluid rounded"
+                    style="max-height: 350px; object-fit: cover;">
+            </div>
 
             <ul class="list-group mb-4">
                 <li class="list-group-item">
@@ -40,7 +38,7 @@
                     Edit
                 </a>
 
-                <form method="post" action="/listings/<%= listing._id %>?_method=DELETE">
+                <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE">
                     <button class="btn btn-outline-danger">
                         Delete
                     </button>
