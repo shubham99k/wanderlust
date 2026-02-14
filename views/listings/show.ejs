@@ -1,50 +1,111 @@
 <% layout("/layouts/boilerplate") %>
 
-<div class="container mt-3">
-    <div class="row justify-content-center">
-        <div class="col-lg-8 col-md-10">
+    <div class="container py-4">
 
-            <h2 class="mb-4">Listing Details</h2>
+        <!-- LISTING DETAILS -->
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
 
-            <!-- Image -->
-            <div class="mb-4 text-center">
-                <img
-                    src="<%= listing.image.url %>"
-                    alt="Listing Image"
-                    class="img-fluid rounded"
-                    style="max-height: 350px; object-fit: cover;">
+                <h2 class="mb-3">
+                    <%= listing.title %>
+                </h2>
+
+                <!-- Image -->
+                <div class="mb-4 text-center">
+                    <img src="<%= listing.image.url %>" alt="Listing Image" class="img-fluid rounded shadow-sm"
+                        style="max-height:350px; object-fit:cover;">
+                </div>
+
+                <!-- Details -->
+                <ul class="list-group mb-4 shadow-sm">
+                    <li class="list-group-item"><strong>Description:</strong>
+                        <%= listing.description %>
+                    </li>
+                    <li class="list-group-item"><strong>Price:</strong> ₹ <%= listing.price.toLocaleString("en-IN") %>
+                    </li>
+                    <li class="list-group-item"><strong>Location:</strong>
+                        <%= listing.location %>
+                    </li>
+                    <li class="list-group-item"><strong>Country:</strong>
+                        <%= listing.country %>
+                    </li>
+                </ul>
+
+                <!-- Actions -->
+                <div class="d-flex gap-2 mb-4">
+                    <a href="/listings/<%= listing._id %>/edit" class="btn btn-dark">Edit</a>
+
+                    <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE">
+                        <button class="btn btn-outline-danger">Delete</button>
+                    </form>
+                </div>
+
             </div>
-
-            <ul class="list-group mb-4">
-                <li class="list-group-item">
-                    <strong>Title:</strong> <%= listing.title %>
-                </li>
-                <li class="list-group-item">
-                    <strong>Description:</strong> <%= listing.description %>
-                </li>
-                <li class="list-group-item">
-                    <strong>Price:</strong> ₹ <%= listing.price.toLocaleString("en-IN") %>
-                </li>
-                <li class="list-group-item">
-                    <strong>Location:</strong> <%= listing.location %>
-                </li>
-                <li class="list-group-item">
-                    <strong>Country:</strong> <%= listing.country %>
-                </li>
-            </ul>
-
-            <div class="d-flex gap-2">
-                <a href="/listings/<%= listing._id %>/edit" class="btn btn-dark">
-                    Edit
-                </a>
-
-                <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE">
-                    <button class="btn btn-outline-danger">
-                        Delete
-                    </button>
-                </form>
-            </div>
-
         </div>
+
+        <hr class="my-5">
+
+        <!-- REVIEW FORM -->
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+
+                <h4 class="mb-3">Leave a Review</h4>
+
+                <form action="/listings/<%= listing.id %>/reviews" method="POST" class="needs-validation" novalidate>
+
+                    <div class="mb-3">
+                        <label for="rating" class="form-label">Rating</label>
+                        <input type="range" class="form-range" min="1" max="5" id="rating" name="review[rating]">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="comment" class="form-label">Comment</label>
+                        <textarea id="comment" name="review[comment]" rows="4" class="form-control" required></textarea>
+                        <div class="invalid-feedback">
+                            Please add some comment for review
+                        </div>
+                    </div>
+
+                    <button class="btn btn-dark">Submit</button>
+                </form>
+
+                <hr class="my-5">
+
+                <!-- REVIEWS LIST -->
+                <h5 class="mb-3">All Reviews</h5>
+
+                <div class="row g-3">
+                    <% for(review of listing.reviews) { %>
+
+                        <div class="col-md-6">
+                            <div class="card h-100 shadow-sm">
+                                <div class="card-body">
+
+                                    <h6 class="card-title mb-2">Anonymous User</h6>
+
+                                    <p class="card-text mb-2">
+                                        <%= review.comment %>
+                                    </p>
+
+                                    <p class="text-muted small mb-3">
+                                        Rating: <%= review.rating %> / 5 stars
+                                    </p>
+
+                                    <form method="POST"
+                                        action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE">
+                                        <button class="btn btn-sm btn-outline-danger">
+                                            Delete
+                                        </button>
+                                    </form>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <% } %>
+                </div>
+
+            </div>
+        </div>
+
     </div>
-</div>

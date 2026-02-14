@@ -101,7 +101,7 @@ h1 {
 /* Remove custom .row styles to keep Bootstrap grid working */
 
 /* Card Styling */
-.card {
+.listing-card {
   border: none;
   border-radius: 15px;
   overflow: hidden;
