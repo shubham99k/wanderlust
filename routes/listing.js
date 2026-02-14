@@ -7,7 +7,7 @@ const wrapAsync = require("../utils/wrapAsync.js");
 const ExpressError = require("../utils/ExpressError.js");
 const { listingSchema } = require("../schema.js");
 
-// ---------- HELPERS ----------
+// HELPERS
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
 const validateListing = (req, res, next) => {
@@ -18,7 +18,7 @@ const validateListing = (req, res, next) => {
     next();
 };
 
-// ---------- ROUTES ----------
+// ROUTES
 
 // INDEX
 router.get("/", wrapAsync(async (req, res) => {
