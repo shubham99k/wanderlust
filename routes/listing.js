@@ -35,42 +35,48 @@ router.get("/new", (req, res) => {
 router.post("/", validateListing, wrapAsync(async (req, res) => {
     const newListing = new Listing(req.body.listing);
     await newListing.save();
+    req.flash("success", "Listing created successfully!");
     res.redirect("/listings");
 }));
 
-// SHOW
 router.get("/:id", wrapAsync(async (req, res) => {
     const { id } = req.params;
 
     if (!isValidObjectId(id)) {
-        throw new ExpressError(400, "Invalid listing ID");
+        req.flash("error", "Invalid listing ID");
+        return res.redirect("/listings");
     }
 
     const listing = await Listing.findById(id).populate("reviews");
 
     if (!listing) {
-        throw new ExpressError(404, "Listing not found");
+        req.flash("error", "Listing not found!");
+        return res.redirect("/listings");
     }
 
     res.render("listings/show.ejs", { listing });
 }));
+
 
 // EDIT
 router.get("/:id/edit", wrapAsync(async (req, res) => {
     const { id } = req.params;
 
     if (!isValidObjectId(id)) {
-        throw new ExpressError(400, "Invalid listing ID");
+        req.flash("error", "Invalid listing ID");
+        return res.redirect("/listings");
     }
 
     const listing = await Listing.findById(id);
 
     if (!listing) {
-        throw new ExpressError(404, "Listing not found");
+        req.flash("error", "Listing not found!");
+        return res.redirect("/listings");
     }
 
     res.render("listings/edit.ejs", { listing });
 }));
+
 
 // UPDATE
 router.put("/:id", validateListing, wrapAsync(async (req, res) => {
@@ -81,7 +87,10 @@ router.put("/:id", validateListing, wrapAsync(async (req, res) => {
     }
 
     await Listing.findByIdAndUpdate(id, req.body.listing);
+
+    req.flash("success", "Listing update successfully!");
     res.redirect(`/listings/${id}`);
+
 }));
 
 // DELETE
@@ -93,6 +102,8 @@ router.delete("/:id", wrapAsync(async (req, res) => {
     }
 
     await Listing.findByIdAndDelete(id);
+
+    req.flash("success", "Listing deleted successfully!");
     res.redirect("/listings");
 }));
 
