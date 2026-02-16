@@ -54,9 +54,27 @@
                 <form action="/listings/<%= listing.id %>/reviews" method="POST" class="needs-validation" novalidate>
 
                     <div class="mb-3">
-                        <label for="rating" class="form-label">Rating</label>
-                        <input type="range" class="form-range" min="1" max="5" id="rating" name="review[rating]">
+                        <label class="form-label">Rating</label>
+
+                        <div class="star-rating">
+                            <input type="radio" name="review[rating]" id="star5" value="5" required>
+                            <label for="star5">★</label>
+
+                            <input type="radio" name="review[rating]" id="star4" value="4">
+                            <label for="star4">★</label>
+
+                            <input type="radio" name="review[rating]" id="star3" value="3">
+                            <label for="star3">★</label>
+
+                            <input type="radio" name="review[rating]" id="star2" value="2">
+                            <label for="star2">★</label>
+
+                            <input type="radio" name="review[rating]" id="star1" value="1">
+                            <label for="star1">★</label>
+
+                        </div>
                     </div>
+
 
                     <div class="mb-3">
                         <label for="comment" class="form-label">Comment</label>

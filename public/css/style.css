@@ -157,3 +157,31 @@ h1 {
     height: 180px;
   }
 }
+
+/* Rating Star */
+
+.star-rating {
+  direction: rtl;
+  display: inline-flex;
+  gap: 5px;
+  font-size: 1.8rem;
+}
+
+.star-rating input {
+  display: none;
+}
+
+.star-rating label {
+  color: #ccc;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.star-rating input:checked ~ label {
+  color: #ffc107;
+}
+
+.star-rating label:hover,
+.star-rating label:hover ~ label {
+  color: #ffc107;
+}
