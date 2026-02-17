@@ -8,49 +8,14 @@ const wrapAsync = require("../utils/wrapAsync.js");
 const ExpressError = require("../utils/ExpressError.js");
 const { validateReview, isValidObjectId, isLoggedIn, isReviewAuthor } = require("../middleware.js");
 
+const reviewController = require("../controllers/reviews.js");
 
-// ROUTES
 
 // CREATE REVIEW
-router.post("/",isLoggedIn, validateReview, wrapAsync(async (req, res) => {
-    const { id } = req.params;
-
-    if (!isValidObjectId(id)) {
-        throw new ExpressError(400, "Invalid listing ID");
-    }
-
-    const listing = await Listing.findById(id);
-    if (!listing) {
-        throw new ExpressError(404, "Listing not found");
-    }
-
-    let newReview = new Review(req.body.review);
-    newReview.author = req.user._id;
-    listing.reviews.push(newReview);
-
-    await newReview.save();
-    await listing.save();
-
-    req.flash("success", "Review created successfully!");
-    res.redirect(`/listings/${id}`);
-}));
+router.post("/",isLoggedIn, validateReview, wrapAsync(reviewController.createReview));
 
 // DELETE REVIEW
-router.delete("/:reviewId", isLoggedIn, isReviewAuthor, wrapAsync(async (req, res) => {
-    const { id, reviewId } = req.params;
+router.delete("/:reviewId", isLoggedIn, isReviewAuthor, wrapAsync(reviewController.deleteReview));
 
-    if (!isValidObjectId(id) || !isValidObjectId(reviewId)) {
-        throw new ExpressError(400, "Invalid ID");
-    }
-
-    await Listing.findByIdAndUpdate(id, {
-        $pull: { reviews: reviewId }
-    });
-
-    await Review.findByIdAndDelete(reviewId);
-
-    req.flash("success", "Review deleted successfully!");
-    res.redirect(`/listings/${id}`);
-}));
 
 module.exports = router;

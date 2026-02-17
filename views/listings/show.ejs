@@ -108,15 +108,19 @@
                                     <div class="card h-100 shadow-sm">
                                         <div class="card-body">
 
-                                            <p class="card-title mb-2">@<%= review.author.username %></p>
+                                            <p class="card-title mb-2">@<%= review.author.username %>
+                                            </p>
 
                                             <p class="card-text mb-2">
                                                 <%= review.comment %>
                                             </p>
 
-                                            <p class="text-muted small mb-3">
-                                                Rating: <%= review.rating %> / 5 stars
+                                            <p class="text-warning mb-3">
+                                                <% for (let i=1; i <=5; i++) { %>
+                                                    <%= i <=review.rating ? "★" : "☆" %>
+                                                        <% } %>
                                             </p>
+
 
                                             <form method="POST"
                                                 action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE">
