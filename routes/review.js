@@ -6,7 +6,7 @@ const Listing = require("../models/listing.js");
 const Review = require("../models/review.js");
 const wrapAsync = require("../utils/wrapAsync.js");
 const ExpressError = require("../utils/ExpressError.js");
-const { validateReview, isValidObjectId } = require("../middleware.js");
+const { validateReview, isValidObjectId, isLoggedIn, isReviewAuthor } = require("../middleware.js");
 
 
 // HELPERS
@@ -16,7 +16,7 @@ const { validateReview, isValidObjectId } = require("../middleware.js");
 // ROUTES
 
 // CREATE REVIEW
-router.post("/", validateReview, wrapAsync(async (req, res) => {
+router.post("/",isLoggedIn, validateReview, wrapAsync(async (req, res) => {
     const { id } = req.params;
 
     if (!isValidObjectId(id)) {
@@ -28,7 +28,8 @@ router.post("/", validateReview, wrapAsync(async (req, res) => {
         throw new ExpressError(404, "Listing not found");
     }
 
-    const newReview = new Review(req.body.review);
+    let newReview = new Review(req.body.review);
+    newReview.author = req.user._id;
     listing.reviews.push(newReview);
 
     await newReview.save();
@@ -39,7 +40,7 @@ router.post("/", validateReview, wrapAsync(async (req, res) => {
 }));
 
 // DELETE REVIEW
-router.delete("/:reviewId", wrapAsync(async (req, res) => {
+router.delete("/:reviewId", isLoggedIn, isReviewAuthor, wrapAsync(async (req, res) => {
     const { id, reviewId } = req.params;
 
     if (!isValidObjectId(id) || !isValidObjectId(reviewId)) {
