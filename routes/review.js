@@ -6,19 +6,11 @@ const Listing = require("../models/listing.js");
 const Review = require("../models/review.js");
 const wrapAsync = require("../utils/wrapAsync.js");
 const ExpressError = require("../utils/ExpressError.js");
-const { reviewSchema } = require("../schema.js");
+const { validateReview, isValidObjectId } = require("../middleware.js");
 
 
 // HELPERS
-const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
-const validateReview = (req, res, next) => {
-    const { error } = reviewSchema.validate(req.body);
-    if (error) {
-        throw new ExpressError(400, error.details[0].message);
-    }
-    next();
-};
 
 
 // ROUTES

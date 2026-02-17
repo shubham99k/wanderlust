@@ -5,18 +5,7 @@ const mongoose = require("mongoose");
 const Listing = require("../models/listing.js");
 const wrapAsync = require("../utils/wrapAsync.js");
 const ExpressError = require("../utils/ExpressError.js");
-const { listingSchema } = require("../schema.js");
-
-// HELPERS
-const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
-
-const validateListing = (req, res, next) => {
-    const { error } = listingSchema.validate(req.body);
-    if (error) {
-        throw new ExpressError(400, error.details[0].message);
-    }
-    next();
-};
+const { isLoggedIn, isOwner, isValidObjectId, validateListing } = require("../middleware.js");
 
 // ROUTES
 
@@ -27,17 +16,20 @@ router.get("/", wrapAsync(async (req, res) => {
 }));
 
 // NEW
-router.get("/new", (req, res) => {
+router.get("/new", isLoggedIn, (req, res) => {
     res.render("listings/new.ejs");
 });
 
 // CREATE
-router.post("/", validateListing, wrapAsync(async (req, res) => {
+router.post("/",isLoggedIn, validateListing, wrapAsync(async (req, res) => {
     const newListing = new Listing(req.body.listing);
-    await newListing.save();
+    newListing.owner = req.user._id; // Set the owner to the currently logged-in user
+    await newListing.save(); 
     req.flash("success", "Listing created successfully!");
     res.redirect("/listings");
 }));
+
+//  SHOW
 
 router.get("/:id", wrapAsync(async (req, res) => {
     const { id } = req.params;
@@ -47,7 +39,7 @@ router.get("/:id", wrapAsync(async (req, res) => {
         return res.redirect("/listings");
     }
 
-    const listing = await Listing.findById(id).populate("reviews");
+    const listing = await Listing.findById(id).populate("reviews").populate("owner");
 
     if (!listing) {
         req.flash("error", "Listing not found!");
@@ -59,7 +51,7 @@ router.get("/:id", wrapAsync(async (req, res) => {
 
 
 // EDIT
-router.get("/:id/edit", wrapAsync(async (req, res) => {
+router.get("/:id/edit",isLoggedIn,isOwner, wrapAsync(async (req, res) => {
     const { id } = req.params;
 
     if (!isValidObjectId(id)) {
@@ -79,7 +71,7 @@ router.get("/:id/edit", wrapAsync(async (req, res) => {
 
 
 // UPDATE
-router.put("/:id", validateListing, wrapAsync(async (req, res) => {
+router.put("/:id",isLoggedIn,isOwner, validateListing, wrapAsync(async (req, res) => {
     const { id } = req.params;
 
     if (!isValidObjectId(id)) {
@@ -94,7 +86,7 @@ router.put("/:id", validateListing, wrapAsync(async (req, res) => {
 }));
 
 // DELETE
-router.delete("/:id", wrapAsync(async (req, res) => {
+router.delete("/:id",isOwner, wrapAsync(async (req, res) => {
     const { id } = req.params;
 
     if (!isValidObjectId(id)) {
