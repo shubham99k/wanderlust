@@ -14,22 +14,17 @@
 </head>
 
 <body>
-    <!-- ✅ Page Container to manage layout -->
     <div class="page-container d-flex flex-column min-vh-100">
         
-        <!-- Navbar (fixed part of the top layout) -->
         <%- include("../includes/navbar.ejs") %>
-
         <%- include("../includes/flash.ejs") %>
 
-        <!-- ✅ Content Wrap to push footer down -->
         <div class="content-wrap flex-grow-1">
             <div class="container py-4">
                 <%- body %>
             </div>
         </div>
 
-        <!-- ✅ Footer always at bottom -->
         <%- include("../includes/footer.ejs") %>
     </div>
 

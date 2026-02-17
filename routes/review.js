@@ -9,10 +9,6 @@ const ExpressError = require("../utils/ExpressError.js");
 const { validateReview, isValidObjectId, isLoggedIn, isReviewAuthor } = require("../middleware.js");
 
 
-// HELPERS
-
-
-
 // ROUTES
 
 // CREATE REVIEW
