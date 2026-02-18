@@ -22,10 +22,10 @@ module.exports.showListing = async (req, res) => {
     }
 
     const listing = await Listing.findById(id)
-    .populate({
-        path: "reviews",
-        populate: { path: "author" },
-    }).populate("owner");
+        .populate({
+            path: "reviews",
+            populate: { path: "author" },
+        }).populate("owner");
 
     if (!listing) {
         req.flash("error", "Listing not found!");
@@ -37,8 +37,12 @@ module.exports.showListing = async (req, res) => {
 
 // Create new listing
 module.exports.createListing = async (req, res) => {
+    let url = req.file.path;
+    let filename = req.file.filename;
+
     const newListing = new Listing(req.body.listing);
-    newListing.owner = req.user._id; // Set the owner to the currently logged-in user
+    newListing.owner = req.user._id;
+    newListing.image = { url, filename };
     await newListing.save();
     req.flash("success", "Listing created successfully!");
     res.redirect("/listings");
@@ -68,10 +72,17 @@ module.exports.updateListing = async (req, res) => {
     const { id } = req.params;
 
     if (!isValidObjectId(id)) {
-        throw new ExpressError(400, "Invalid listing ID");
+        throw new ExpressError(400, "Invalid listing ID"); 
     }
 
-    await Listing.findByIdAndUpdate(id, req.body.listing);
+    let listing = await Listing.findByIdAndUpdate(id, req.body.listing);
+
+    if (typeof req.file !== "undefined") {
+        let url = req.file.path;
+        let filename = req.file.filename;
+        listing.image = { url, filename };
+        await listing.save();
+    }
 
     req.flash("success", "Listing update successfully!");
     res.redirect(`/listings/${id}`);
