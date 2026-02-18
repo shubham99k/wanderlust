@@ -87,9 +87,9 @@ app.use((req, res, next) => {
 });
 
 // ROUTES
-// app.get("/", (req, res) => {
-//     res.send("Hi, I am root");
-// });
+app.get("/", (req, res) => {
+    res.redirect("/listings");
+});
 
 // routers added
 app.use("/listings", listingRouter);
